@@ -1,0 +1,25 @@
+{% extends 'layout/nav.html' %}
+{% block content %}
+
+<form action method="post" id="form">
+    {% csrf_token %}
+    {{form}}
+    <input type="submit" name="" id="">
+</form>
+
+<ul>
+    {% for err in errors.values %}
+    {% if err != '' %}
+    <li>{{err}}</li>
+    {%endif%}
+    {% endfor %}
+    <li id="err-500" hidden>Los datos enviados son invalidos o el servidor no esta respondiendo.</li>    
+</ul>
+
+
+
+{% endblock content %}
+
+
+{% block js%}
+{% endblock js%}

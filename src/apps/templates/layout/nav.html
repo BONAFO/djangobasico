@@ -1,0 +1,39 @@
+
+{% block nav %}
+<nav>
+    <a href="/home">HOME</a>
+    <a href="/login">LOGIN</a>
+    <a href="/signup">SIGNUP</a>
+    {% if user_is_logged %}
+    <div>
+        <br>
+        <br>
+        <a id="delete_account" href="/account/delete/{{id}}">DELETE ACCOUNT</a>
+        <a href="/account/update/{{id}}">UPDATE ACCOUNT</a>
+        <a href="/logout">LOGOUT</a>
+        <br><br>
+    </div>
+    {% endif %}
+
+
+    <div hidden id="formi-cont">
+        <form action="" id="formi">
+            {% csrf_token %}
+            <input type="password" name="password" placeholder="password">
+            <input type="submit">
+        </form>
+    </div>
+
+
+{% block nav_js %}
+<script src="{{ASSETS_ROOT}}/js/get_cookies.js" type="text/javascript"></script>
+<script src="{{ASSETS_ROOT}}/js/users/delete.user.js" type="text/javascript"></script>
+
+{% endblock nav_js %}
+    
+</nav>
+{% endblock nav %}
+
+{% block content %}{% endblock content %}
+{% block stylesheets %}{% endblock stylesheets %}
+{% block js %}{% endblock js %}

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    {% extends 'layout/nav.html' %}
+</head>
+<body>
+    
+    {% block content %}
+    Se ha creado pepito!
+    <h3>REGISTRATE!</h3>
+    <form action="" id="form" method="post">
+        {% csrf_token %}
+        <!-- <label for="">NOMBRE DE USUARIO</label> <br>
+        <input type="text" name="name"> <br>
+        <label for="">DNI</label> <br>
+        <input type="text" name="dni"> <br>
+        <label for="">EDAD</label> <br>
+        <input type="number" name="age"> <br>
+        <label for="">CONTRASEÑA</label> <br>
+        <input type="password" name="password"> <br>
+
+         -->
+
+         {{form}}
+
+
+        <input type="submit">
+    </form>
+
+
+    {% endblock content %}
+
+    {% block js %}
+    <script src="{{ASSETS_ROOT}}/js/get_cookies.js" type="text/javascript"></script>
+    <script src="{{ASSETS_ROOT}}/js/usuarios/signup.js" type="text/javascript"></script>
+    {% endblock js %}
+
+</body>
+</html>

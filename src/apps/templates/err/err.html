@@ -1,0 +1,29 @@
+
+
+{% extends 'layout/nav.html' %}
+
+{% block stylesheets %}
+    <link type="text/css" href="{{ ASSETS_ROOT }}/css/custom.css" rel="stylesheet">
+{% endblock stylesheets %}
+
+
+{% block content %}ah
+
+        <div>
+
+            {% if err.type == 'integrity' %}
+            <h3 class="{{err.type}}-err">Oh! Oh!! Something went wrong!!!</h3>
+            {% else %}
+            <h3 class="basic-err">Oh! Oh!! Something went wrong!!!</h3>
+            {% endif %}
+            {{err.txt}}
+        </div>
+        
+{% endblock content %}
+
+
+
+
+
+
+

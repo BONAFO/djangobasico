@@ -1,0 +1,14 @@
+{% extends 'layout/nav.html' %}
+
+
+{% block content %}
+<form action="" method="post">
+    {% csrf_token %}
+    {{form}}
+    <input type="submit" value="GO">
+</form>
+
+<h3>{{error}}</h3>
+
+{% endblock content %}
+

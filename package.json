@@ -1,0 +1,7 @@
+{
+    "scripts": {
+        "start": "py ./src/manage.py runserver 3000",
+        "migrate": "py ./src/manage.py makemigrations && py ./src/manage.py migrate",
+        "go": "npm run migrate && npm start"
+    }
+}
