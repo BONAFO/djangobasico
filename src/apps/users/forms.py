@@ -1,15 +1,66 @@
 from collections.abc import Mapping
 from typing import Any
-from django.contrib.auth import forms
+from django.contrib.auth import forms, authenticate, password_validation
 from django.forms.utils import ErrorList
 from apps.home.models import User
 from django import forms as form_model
+from django.core.exceptions import ValidationError
+
+
+def validate_password(oldp, newp, renewp, username, request):
+    msg = {"txt": [], "bool": True}
+    if oldp is False:
+        msg["bool"] = False
+    elif newp is False:
+        msg["bool"] = False
+    elif renewp is False:
+        msg["bool"] = False
+    elif renewp != newp:
+        msg["txt"].append(
+            {
+                "txt": "Las nuevas contraseñas no coinciden.",
+                "field": "new_password",
+            }
+        )
+        msg["bool"] = False
+    elif oldp == newp:
+        msg["txt"].append(
+            {"txt": "Tu nueva contraseña no puede ser la antigua.", "field": "new_re_password"}
+        )
+        msg["bool"] = False
+
+    if msg["bool"]:
+        try:
+            password_validation.validate_password(newp)
+        except ValidationError as error:
+            # print(1111)
+            # errore = errore + list(error)
+            error_list = list(error)
+            raw_txt = "Su nueva contraseña contiene los siguientes errores: "
+            for err in error_list:
+                raw_txt += err + ","
+            msg["txt"].append({"txt": raw_txt, "field": "password"})
+            # msg["txt"] +
+            msg["bool"] = False
+        if msg["bool"]:
+            auth = authenticate(request, username=username, password=oldp)
+            if auth is None:
+                msg["txt"].append("Contraseña original erronea o invalida")
+                msg["txt"].append(
+                    {
+                        "txt": "Las nuevas contraseñas no coinciden.",
+                        "field": "password",
+                    }
+                )
+                msg["bool"] = False
+            else:
+                msg["bool"] = True
+    return msg
 
 
 class Update_User_Form(form_model.ModelForm):
     error_css_class = "is-invalid"
     required_css_class = "required-field"
-
     # nombre = form_model.CharField(
     #     label="Nombre",
     #     empty_value=False,
@@ -90,7 +141,7 @@ class Update_User_Form(form_model.ModelForm):
         if user_id is not None:
             user_data = User.objects.filter(pk=user_id).values()[0]
             self.fields["nombre"].initial = user_data["nombre"]
-            self.fields["apellido"].initial = user_data["nombre"]
+            self.fields["apellido"].initial = user_data["apellido"]
             self.fields["edad"].initial = user_data["edad"]
             self.fields["dni"].initial = user_data["dni"]
 
@@ -99,17 +150,56 @@ class Update_User_Form(form_model.ModelForm):
     #     # clean_data  = super().clean()
     #     # clean_data["password"] = self["password"].value()
     #     print(self["password"].value())
-    #     return {}  
-    def is_valid(self) -> bool:
+    #     return {}
+    def is_valid(self, request) -> bool:
         super().is_valid()
-        print(self.cleaned_data)
-        return True
+        final_validation = {"bool": False, "txt": ""}
+        user_data = User.objects.filter(pk=request.user.pk).values()[0]
 
-    def save(self, *args, **kwargs):
-        data = self.cleaned_data
-        original = User.objects.filter(pk=data["id"]).values()[0]
-        changed = {}
-        print(original)
+        to_erase = []
+
+        for k in self.cleaned_data:
+            if k.find("password") == -1 and (
+                self.cleaned_data[k] == False or self.cleaned_data[k] == user_data[k]
+            ):
+                to_erase.append(k)
+
+        for k in to_erase:
+            try:
+                self.cleaned_data.pop(k)
+            except:
+                False
+
+        pass_validations = validate_password(
+            oldp=self.cleaned_data["password"],
+            newp=self.cleaned_data["new_password"],
+            renewp=self.cleaned_data["new_re_password"],
+            username=user_data["username"],
+            request=request,
+        )
+
+        if not pass_validations["bool"]:
+            self.cleaned_data.pop("password")
+            self.cleaned_data.pop("new_re_password")
+            self.cleaned_data.pop("new_password")
+
+        for err in pass_validations["txt"]:
+            self.add_error(field=err["field"], error=err["txt"])
+            # self.add_error({
+            #     "field": "asdasd",
+            #     "error" : "asasdaad"
+            # })
+
+        if len(self.cleaned_data) == 0:
+            return pass_validations["bool"]
+        else:
+            return True
+
+    # def save(self, *args, **kwargs):
+    #     data = self.cleaned_data
+    #     original = User.objects.filter(pk=data["id"]).values()[0]
+    #     changed = {}
+    #     print(original)
         # validate_password(
         #     oldp= data["password"],
         #     newp= data["new_password"],

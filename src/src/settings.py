@@ -162,3 +162,5 @@ AUTH_USER_MODEL=('apps_home.User')
 
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 SESSION_COOKIE_HTTPONLY = True
+
+LANGUAGE_CODE = 'es-es'

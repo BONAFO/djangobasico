@@ -46,11 +46,11 @@ from django.utils.decorators import method_decorator
 # EXAMPLE CLASS VIEW
 # @method_decorator(user_is_logged, name="dispatch")
 
-def consume_is_logged(args):
-    try:
-        return args[0]
-    except:
-        return False
+# def consume_is_logged(args):
+#     try:
+#         return args[0]
+#     except:
+#         return False
 
 
 def get_id(request):
@@ -59,11 +59,13 @@ def get_id(request):
     else:
         return None
 
+
 def add_basic_context(request):
-    context ={}
+    context = {}
     context["id"] = get_id(request)
     context["user_is_logged"] = request.user.is_authenticated
     return context
+
 
 @method_decorator(decorators.login_required(login_url="/login"), name="dispatch")
 class home(View):
@@ -71,7 +73,7 @@ class home(View):
         context = {}
         context.update(add_basic_context(request))
         # consume_is_logged(args)
-        context["user_is_logged"] = request.user.is_authenticated
+        # context["user_is_logged"] = request.user.is_authenticated
 
         return render(request, "home/home.html", context)
         # if request.user.is_authenticated:
@@ -91,13 +93,12 @@ def signup(request):
     context["error"] = {}
     # context["user_is_logged"] = request.user.is_authenticated
     context.update(add_basic_context(request))
-    
+
     context["form"] = Create_user_form
     if request.method == "GET":
         return render(request, "home/signup.html", context)
     elif request.method == "POST":
         form_data = Create_user_form(request.POST)
-        print(request.POST)
         if form_data.is_valid():
             try:
                 form_data.save()
@@ -118,11 +119,12 @@ def signup(request):
                 return render(request, "home/signup.html", context)
 
         else:
-# ["password_mismatch"]
-            context["errors"] = form_data.error_messages
-            context["errors"]["password_mismatch"] = ""
-            context["errors"]["password1"] = ""
-            context["errors"]["password2"] = ""
+            # ["password_mismatch"]
+            # context["errors"] = form_data.error_messages
+            # context["errors"]["password_mismatch"] = ""
+            # context["errors"]["password1"] = ""
+            # context["errors"]["password2"] = ""
+            context["errors"] = form_data.errors.values()
             return render(request, "home/signup.html", context)
 
     # context = {}
