@@ -5,6 +5,8 @@ from apps.home.models import User
 from apps.users.forms import Update_User_Form
 from django.db import Error
 from apps.home.views import add_basic_context
+from django.core import serializers
+from django.template.defaulttags import register
 # Create your views here.
 # from apps.home.decorators import user_is_logged
 
@@ -17,6 +19,7 @@ from apps.home.views import add_basic_context
 # def test(request, id):
 #     print(id)
 #     return HttpResponse("asdasdasd")
+
 
 @decorators.login_required(login_url="/login")
 def delete_confirm(request, id):
@@ -73,7 +76,7 @@ def update_user(request, id):
             except:
                 False
             # print(form.cleaned_data)
-            User.objects.filter(pk = request.user.pk).update(**form.cleaned_data)
+            User.objects.filter(pk=request.user.pk).update(**form.cleaned_data)
             return render(request, "usuarios/update_user.html", context)
         else:
             return render(request, "usuarios/update_user.html", context)
@@ -94,3 +97,27 @@ def update_user(request, id):
 #         return redirect("/logout")
 
 #     return render(request, "users/delete.html", context)
+
+
+# permi
+# def get_users():
+@decorators.permission_required("usuario:get_user", login_url="/login")
+def get_user(request):
+    context = {}
+    context['keys'] = [ "Nombre","Apellido","DNI", "Edad"]
+    data = User.objects.all().values("dni", "edad", "apellido", "nombre")
+    context["data"] = list(data) + list(data) +list(data) + list(data)
+    return render(request, 'usuarios/table.users.html' , context)
+
+
+@register.filter
+def get_user_list(value, arg) :
+    return value[arg.lower()]
+# @register.filter
+# def get_item(dictionary, key):
+#     print(key)
+#     print(dictionary)
+#     return 1
+#     # return dictionary.get(key)
+
+

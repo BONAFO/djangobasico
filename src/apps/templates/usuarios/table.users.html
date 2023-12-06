@@ -1,0 +1,61 @@
+{% extends 'layout/nav.html' %}
+
+{% block stylesheets %}
+
+{% include 'includes/styles.html' %}
+
+{% endblock stylesheets%} {% block content %}
+
+<!-- <div id="table-container">
+    <table id="my-table" class="display">
+        <thead>
+            <tr id="table-clm">
+
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div> -->
+
+<table id="myTable" class="display">
+    <thead>
+        <tr>
+            {% for k in keys %}
+            <th>{{k}}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for dat in data %}
+        <tr>
+            {% for k in keys %}
+            <th>{{dat|get_user_list:k}}</th>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock content %}
+
+{% block js %}
+
+{% include 'includes/scripts.html' %}
+
+
+<script>
+    $(document).ready(function () {
+        $("#myTable").DataTable(
+
+            data = [{
+                "edad": "60"
+            }],
+            columns = [
+                {
+                    "data": "edad",
+                }
+            ]
+        );
+    });
+</script>
+{% endblock js %}

@@ -94,11 +94,11 @@ def signup(request):
     # context["user_is_logged"] = request.user.is_authenticated
     context.update(add_basic_context(request))
 
-    context["form"] = Create_user_form
+    context["form"] = Create_user_form(request.POST or None)
     if request.method == "GET":
         return render(request, "home/signup.html", context)
     elif request.method == "POST":
-        form_data = Create_user_form(request.POST)
+        form_data = context["form"]
         if form_data.is_valid():
             try:
                 form_data.save()

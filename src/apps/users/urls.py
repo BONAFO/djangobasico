@@ -22,6 +22,8 @@ from apps.users import views
 urlpatterns = [
     path("delete/<int:id>", views.delete_confirm, name="delete user"),
     path("update/<int:id>", views.update_user, name="update user"),
+    path("users/", views.get_user, name="get_user"),
+
     # path("test/<int:id>", views.test, name="update user"),
     # path("admin/", admin.site.urls),
     # path('home/', views.home.as_view(),name="home"),
