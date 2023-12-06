@@ -46,7 +46,11 @@
 <script>
     $(document).ready(function () {
         $("#myTable").DataTable(
-
+        {
+            language: {
+                emptyTable : "No hay datos disponibles para esta tabla.",
+            }
+        },
             data = [{
                 "edad": "60"
             }],

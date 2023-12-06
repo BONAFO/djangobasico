@@ -7,8 +7,10 @@ from django.db import Error
 from apps.home.views import add_basic_context
 from django.core import serializers
 from django.template.defaulttags import register
+from django.db.models.functions import Lower
 # Create your views here.
 # from apps.home.decorators import user_is_logged
+
 
 
 # AGREGAR UN MIDDLE DONDE VALIDE TANTO CUENTA DE SUPER ADMIN (QUE LA PASSWORD SEA LA SUYA) Y
@@ -99,13 +101,16 @@ def update_user(request, id):
 #     return render(request, "users/delete.html", context)
 
 
+def to_lower_list(list_inp):
+    return list(map(lambda x: x.lower(),list_inp))
+
 # permi
 # def get_users():
 @decorators.permission_required("usuario:get_user", login_url="/login")
 def get_user(request):
     context = {}
-    context['keys'] = [ "Nombre","Apellido","DNI", "Edad"]
-    data = User.objects.all().values("dni", "edad", "apellido", "nombre")
+    context['keys'] = [ "Nombre","Apellido","DNI", "Edad", "Username"]
+    data = User.objects.filter(pk= 100).values(*to_lower_list(context['keys']))
     context["data"] = list(data) + list(data) +list(data) + list(data)
     return render(request, 'usuarios/table.users.html' , context)
 
